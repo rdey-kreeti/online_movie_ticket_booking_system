@@ -4,6 +4,22 @@ import {Link} from 'react-router-dom';
 
 import Header from '../Header';
 
+const TheatresTable = Styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const Th = Styled.th`
+  border: 1px solid #000000;
+  padding: 5px;
+`;
+
+const Td = Styled.td`
+  border: 1px solid #000000;
+  padding: 5px;
+  text-align: center;
+`;
+
 class Theatres extends Component {
   constructor(props) {
     super();
@@ -23,34 +39,27 @@ class Theatres extends Component {
     }
   }
 
-  TheatresTable = Styled.table`
-    width: 100%;
-    border-collapse: collapse;
-  `;
-
-  Th = Styled.th`
-    border: 1px solid #000000;
-    padding: 5px;
-  `;
-
-  Td = Styled.td`
-    border: 1px solid #000000;
-    padding: 5px;
-    text-align: center;
-  `;
-
   renderShowTimingCell = (theatreId) => {
     const {showTimings} = this.state;
     const filteredShowTimings = showTimings.filter((showtime, index) => showtime.theatreId === theatreId);
 
     const cell = [1,1,1,1].map((el, index) => {
       if (filteredShowTimings[index] !== undefined) {
-        return <this.Td>{filteredShowTimings[index].time}</this.Td>
+        return <Td>{filteredShowTimings[index].time}</Td>
       } else {
-        return <this.Td>-</this.Td>
+        return <Td>-</Td>
       }
     })
     return cell;
+  }
+
+  deleteTheatre = (id) => {
+    const {theatres, showTimings} = this.state;
+    const updateTheatres = theatres.filter(theatre => theatre.id !== id);
+    const updateShowTimings = showTimings.filter(showTime => showTime.theatreId !== id);
+    this.setState({theatres: updateTheatres, showTimings: updateShowTimings});
+    localStorage.setItem('theatres', JSON.stringify(updateTheatres));
+    localStorage.setItem('showTimings', JSON.stringify(updateShowTimings));
   }
 
   render() {
@@ -59,33 +68,37 @@ class Theatres extends Component {
       <>
         <Header/>
         <Link to='/add-theatre'>Add New Theatre</Link>
-        <this.TheatresTable>
+        <TheatresTable>
           <thead>
             <tr>
-              <this.Th>ID</this.Th>
-              <this.Th>Name</this.Th>
-              <this.Th>Rows</this.Th>
-              <this.Th>Columns</this.Th>
-              <this.Th>ShowTime 1</this.Th>
-              <this.Th>ShowTime 2</this.Th>
-              <this.Th>ShowTime 3</this.Th>
-              <this.Th>ShowTime 4</this.Th>
+              <Th>ID</Th>
+              <Th>Name</Th>
+              <Th>Rows</Th>
+              <Th>Columns</Th>
+              <Th>ShowTime 1</Th>
+              <Th>ShowTime 2</Th>
+              <Th>ShowTime 3</Th>
+              <Th>ShowTime 4</Th>
+              <Th>&nbsp;</Th>
+              <Th>&nbsp;</Th>
             </tr>
           </thead>
           <tbody>
               {theatres.map((theatre, index) => {
                 return (
                   <tr key={index}>
-                    <this.Td>{theatre.id}</this.Td>
-                    <this.Td>{theatre.name}</this.Td>
-                    <this.Td>{theatre.rows}</this.Td>
-                    <this.Td>{theatre.columns}</this.Td>
+                    <Td>{theatre.id}</Td>
+                    <Td>{theatre.name}</Td>
+                    <Td>{theatre.rows}</Td>
+                    <Td>{theatre.columns}</Td>
                     {this.renderShowTimingCell(theatre.id)}
+                    <Td><Link to={`/theatres/edit/${theatre.id}`}>Edit</Link></Td>
+                    <Td><Link onClick={() => this.deleteTheatre(theatre.id)}>Delete</Link></Td>
                   </tr>
                 )
               })}
           </tbody>
-        </this.TheatresTable>
+        </TheatresTable>
       </>
     )
   }

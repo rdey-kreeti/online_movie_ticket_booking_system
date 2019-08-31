@@ -3,6 +3,8 @@ import Styled from 'styled-components';
 import {Link} from 'react-router-dom';
 
 import Header from '../Header';
+import EditIcon from '../../images/edit_icon.png';
+import DeleteIcon from '../../images/delete_icon.png';
 
 const PageContainer = Styled.section`
   max-width: 1140px;
@@ -22,6 +24,7 @@ const MovieItem = Styled.li`
   width: 200px;
   box-shadow: 0 0 3px rgba(0,0,0,0.5);
   margin-left: 25px;
+  position: relative;
 
   &:first-child {
     margin-left: 0;
@@ -59,6 +62,27 @@ const MovieTags = Styled.span`
   font-size: 12px;
 `;
 
+const DeleteIconLink = Styled(Link)`
+  img {
+    width: 16px;
+    height: 16px;
+    display: block;
+    background: #fff;
+    padding: 5px;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+`;
+
+const EditIconLink = Styled(DeleteIconLink)`
+  img {
+    top: 50px;
+  }
+`;
+
 class Movies extends Component {
   constructor(props) {
     super();
@@ -74,6 +98,13 @@ class Movies extends Component {
     }
   }
 
+  deleteMovie = (id) => {
+    const {movies} = this.state;
+    const updateMovieList = movies.filter(movie => movie.id !== id);
+    this.setState({movies: updateMovieList});
+    localStorage.setItem('movies', JSON.stringify(updateMovieList));
+  }
+
   render() {
     const {movies} = this.state;
     return (
@@ -85,6 +116,12 @@ class Movies extends Component {
             {movies.map((movie, index) => {
               return (
                 <MovieItem>
+                  <DeleteIconLink onClick={() => this.deleteMovie(movie.id)}>
+                    <img src={DeleteIcon} alt="" />
+                  </DeleteIconLink>
+                  <EditIconLink to={`/movies/edit/${movie.id}`}>
+                    <img src={EditIcon} alt="" />
+                  </EditIconLink>
                   <MoviePoster>
                     <MoviePosterImg src={movie.image}/>
                   </MoviePoster>

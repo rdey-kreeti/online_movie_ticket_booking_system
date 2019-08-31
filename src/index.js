@@ -5,9 +5,11 @@ import './index.css';
 import App from './App';
 import AdminDashboard from './components/AdminDashboard';
 import Theatres from './components/Theatres';
+import EditTheatre from './components/EditTheatre';
 import AddTheatre from './components/AddTheatre';
 import Movies from './components/Movies';
 import AddMovie from './components/AddMovie';
+import EditMovie from './components/EditMovie';
 
 const Routing = (
   <Router>
@@ -16,8 +18,10 @@ const Routing = (
       <Route exact path='/admin-dashboard' component={AdminDashboard} />
       <Route exact path='/theatres' component={Theatres} />
       <Route exact path='/add-theatre' component={AddTheatre} />
+      <Route exact path='/theatres/edit/:id' component={EditTheatre} />
       <Route exact path='/movies' component={Movies} />
       <Route exact path='/add-movie' component={AddMovie} />
+      <Route exact path='/movies/edit/:id' component={EditMovie} />
     </Switch>
   </Router>
 )

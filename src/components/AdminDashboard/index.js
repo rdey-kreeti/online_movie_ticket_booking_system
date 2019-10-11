@@ -19,6 +19,7 @@ const AdminDashboard = () => {
       <AdminOptionLinks>
         <AdminOptionLinksItem><Link to='/theatres'>Theatres</Link></AdminOptionLinksItem>
         <AdminOptionLinksItem><Link to='/movies'>Movies</Link></AdminOptionLinksItem>
+        <AdminOptionLinksItem><Link to='/assign-theatres'>Assign Theatres to Movies</Link></AdminOptionLinksItem>
       </AdminOptionLinks>
     </>
   )

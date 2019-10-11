@@ -61,7 +61,7 @@ class EditTheatre extends Component {
 
     let newShowTimings = [showtime1, showtime2, showtime3, showtime4].filter(showtime => showtime.trim().length);
     newShowTimings = newShowTimings.map((showtiming, index) => {
-      return {id: (index + 1), time: showtiming, theatreId: theatreId}
+      return {id: (index + 1), time: showtiming, theatreId: theatreId, status: 'available'}
     });
     
     const allShows = [...showTimings, ...newShowTimings];

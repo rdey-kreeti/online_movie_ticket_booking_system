@@ -10,6 +10,7 @@ import AddTheatre from './components/AddTheatre';
 import Movies from './components/Movies';
 import AddMovie from './components/AddMovie';
 import EditMovie from './components/EditMovie';
+import MovieTheatresAssociation from './components/MovieTheatresAssociation';
 
 const Routing = (
   <Router>
@@ -22,6 +23,7 @@ const Routing = (
       <Route exact path='/movies' component={Movies} />
       <Route exact path='/add-movie' component={AddMovie} />
       <Route exact path='/movies/edit/:id' component={EditMovie} />
+      <Route exact path='/assign-theatres' component={MovieTheatresAssociation} />
     </Switch>
   </Router>
 )

@@ -39,30 +39,38 @@ class MovieTheatresAssociation extends Component {
   }
 
   onInput = (e) => {
-    let {movies, movieShows} = this.state;
-    const movieId = movies.find(movie => movie.name.toLowerCase() === e.target.value).id;
-    const isAlreadyAssigned = movieShows.find(movieShow => movieShow.movieId === movieId);
-    if(isAlreadyAssigned) {
-      let selectedShowTimings = isAlreadyAssigned.shows;
-      this.setState({selectedShowTimings})
+    const movieId = parseInt(e.target.value, 10);
+    if (isNaN(movieId)) {
+      this.setState({movieId: ''})
+    } else {
+      this.setState({movieId})
     }
-    this.setState({movieId})
+    // const isAlreadyAssigned = movieShows.find(movieShow => movieShow.movieId === movieId);
+    // if(isAlreadyAssigned) {
+    //   let selectedShowTimings = isAlreadyAssigned.shows;
+    //   this.setState({selectedShowTimings})
+    // }
+    // if (movieId !== undefined) {
+    //   this.setState({movieId})
+    // } else {
+    //   this.setState({movieId: ''})
+    // }
   }
 
   xyz = () => {
-    let {movieId, movieShows} = this.state;
-    let showTimings = JSON.parse(localStorage.getItem('showTimings'));
-    const isAlreadyAssigned = movieShows.find(movieShow => movieShow.movieId === movieId);
-    if(isAlreadyAssigned) {
-      showTimings = showTimings.map(showTime => {
-        let abc = isAlreadyAssigned.shows.find(show => show.id === showTime.id && show.theatreId === showTime.theatreId);
+    let {showTimings} = this.state;
+    // let showTimings = JSON.parse(localStorage.getItem('showTimings'));
+    // const isAlreadyAssigned = movieShows.find(movieShow => movieShow.movieId === movieId);
+    // if(isAlreadyAssigned) {
+    //   showTimings = showTimings.map(showTime => {
+    //     let abc = isAlreadyAssigned.shows.find(show => show.id === showTime.id && show.theatreId === showTime.theatreId);
         
-        if (abc) {
-          showTime.status = 'available';
-        }
-        return showTime;
-      })
-    }
+    //     if (abc) {
+    //       showTime.status = 'available';
+    //     }
+    //     return showTime;
+    //   })
+    // }
     return showTimings;
   }
 
@@ -70,8 +78,7 @@ class MovieTheatresAssociation extends Component {
     const {selectedShowTimings} = this.state;
 
     const asjdk = selectedShowTimings.filter(show => show.id === dataObj.id && show.theatreId === dataObj.theatreId);
-    
-    console.log(selectedShowTimings, 'isChe')
+
     if(asjdk.length > 0) {
       const updateSelectedShowTimings = selectedShowTimings.filter(showTime => showTime.id !== dataObj.id || showTime.theatreId !== dataObj.theatreId);
       this.setState({selectedShowTimings: updateSelectedShowTimings});
@@ -83,30 +90,55 @@ class MovieTheatresAssociation extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
     let movieShowId;
-    const {movieId, selectedShowTimings, showTimings, movieShows} = this.state;
+    let {movieId, selectedShowTimings, showTimings, movieShows} = this.state;
 
-    if (movieShows.length) {
-      movieShowId = movieShows[movieShows.length - 1].id + 1;
-    } else {
-      movieShowId = 1;
+    if (movieId && selectedShowTimings.length) {
+      if (movieShows.length) {
+        movieShowId = movieShows[movieShows.length - 1].id + 1;
+      } else {
+        movieShowId = 1;
+      }
+  
+      const allMovieShows = [...movieShows, {id: movieShowId, movieId, shows: selectedShowTimings}]
+      this.setState({movieShows: allMovieShows, showTimings});
+      localStorage.setItem('movieShows', JSON.stringify(allMovieShows));
+      localStorage.setItem('showTimings', JSON.stringify(showTimings));
+      this.props.history.push('/admin-dashboard');
+    }
+  }
+
+  handleDisabled = (time) => {
+    let disabled = false;
+    let {movieId, movieShows, selectedShowTimings} = this.state;
+    if (movieId) {
+      const a = movieShows.find(movieShow => movieShow.shows.find(show => show.id === time.id && show.theatreId === time.theatreId));
+      if (a) {
+        disabled = true;
+        selectedShowTimings = [...selectedShowTimings, ...a.shows]
+      }
     }
 
-    showTimings.filter(showTime => selectedShowTimings.includes(showTime) ? showTime.status = 'unavailable' : 'available')
-
-
-
-    const allMovieShows = [...movieShows, {id: movieShowId, movieId, shows: selectedShowTimings}]
-    this.setState({movieShows: allMovieShows, showTimings});
-    localStorage.setItem('movieShows', JSON.stringify(allMovieShows));
-    localStorage.setItem('showTimings', JSON.stringify(showTimings));
-    this.props.history.push('/admin-dashboard');
+    
+    let checked = selectedShowTimings.find(show => show.id === time.id && show.theatreId === time.theatreId)
+    return [checked, disabled]
+    // const isAlreadyAssigned = movieShows.find(movie => movie.movieId === movieId);
+    // if(isAlreadyAssigned) {
+    //   const a = isAlreadyAssigned.shows.find(show => show.id === time.id && show.theatreId === time.theatreId);
+    //   if (a) {
+    //     return true
+    //   }
+    // }
+    // return true
   }
 
   render() {
-    const {movies, theatres, selectedShowTimings} = this.state;
+    const {movieId, movies, theatres, selectedShowTimings, movieShows} = this.state;
     const showTimings = this.xyz();
-    const movieOptions = movies.map(movie => movie.name);
-    console.log(selectedShowTimings, 'askjasdbkjasdbn')
+    const moviesIdList = movieShows.map(movieShow => movieShow.movieId);
+    const filteredMovies = movies.filter(movie => !moviesIdList.includes(movie.id))
+    const movieOptions = filteredMovies.map(movie => [movie.name, movie.id]);
+    const isAlreadyAssigned = movieShows.find(movie => movie.movieId === movieId);
+
     return (
       <>
         <Header />
@@ -117,15 +149,14 @@ class MovieTheatresAssociation extends Component {
               <div>{theatre.name}</div>
               <ul>
                 {showTimings.filter((showTime, index) => showTime.theatreId === theatre.id).map(showTime => {
-                  console.log(showTime, 'show')
                   return (
                     <CheckboxWithLabel 
                       label={showTime.time} 
                       value={showTime.time} 
                       dataObj={showTime} 
                       handleCheck={this.handleCheck}
-                      checked={selectedShowTimings.find(show => show.id === showTime.id && show.theatreId === showTime.theatreId)}
-                      disabled={showTime.status === 'unavailable'}
+                      checked={this.handleDisabled(showTime)[0]}
+                      disabled={this.handleDisabled(showTime)[1]}
                     />
                   )
                 })}

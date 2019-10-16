@@ -22,7 +22,7 @@ const SelectGroup = ({label, name, onChange, options, defaultOption}) => {
       <Label>{label}</Label>
       <Select name={name} onChange={onChange}>
       {defaultOption && <option>{defaultOption}</option>}
-        {options.map((option, index) => <option key={index} value={option.toLowerCase()}>{option}</option>)}
+        {options.map((option, index) => <option key={index} value={parseInt(option[1], 10)}>{option[0]}</option>)}
       </Select>
     </FieldGroup>
   )

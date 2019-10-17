@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
 import Styled from 'styled-components';
 
 import Header from '../Header';
@@ -77,9 +78,9 @@ class MovieTheatresAssociation extends Component {
   handleCheck = (dataObj) => {
     const {selectedShowTimings} = this.state;
 
-    const asjdk = selectedShowTimings.filter(show => show.id === dataObj.id && show.theatreId === dataObj.theatreId);
+    const isShowTimePresent = selectedShowTimings.filter(show => show.id === dataObj.id && show.theatreId === dataObj.theatreId);
 
-    if(asjdk.length > 0) {
+    if(isShowTimePresent.length > 0) {
       const updateSelectedShowTimings = selectedShowTimings.filter(showTime => showTime.id !== dataObj.id || showTime.theatreId !== dataObj.theatreId);
       this.setState({selectedShowTimings: updateSelectedShowTimings});
     } else {
@@ -103,18 +104,22 @@ class MovieTheatresAssociation extends Component {
       this.setState({movieShows: allMovieShows, showTimings});
       localStorage.setItem('movieShows', JSON.stringify(allMovieShows));
       localStorage.setItem('showTimings', JSON.stringify(showTimings));
-      this.props.history.push('/admin-dashboard');
+      this.props.history.push('/movie-shows');
     }
+  }
+
+  handleCancel = (e) => {
+    this.props.history.push('/movie-shows');
   }
 
   handleDisabled = (time) => {
     let disabled = false;
     let {movieId, movieShows, selectedShowTimings} = this.state;
     if (movieId) {
-      const a = movieShows.find(movieShow => movieShow.shows.find(show => show.id === time.id && show.theatreId === time.theatreId));
-      if (a) {
+      const bookedShow = movieShows.find(movieShow => movieShow.shows.find(show => show.id === time.id && show.theatreId === time.theatreId));
+      if (bookedShow) {
         disabled = true;
-        selectedShowTimings = [...selectedShowTimings, ...a.shows]
+        selectedShowTimings = [...selectedShowTimings, ...bookedShow.shows]
       }
     }
 
@@ -137,7 +142,6 @@ class MovieTheatresAssociation extends Component {
     const moviesIdList = movieShows.map(movieShow => movieShow.movieId);
     const filteredMovies = movies.filter(movie => !moviesIdList.includes(movie.id))
     const movieOptions = filteredMovies.map(movie => [movie.name, movie.id]);
-    const isAlreadyAssigned = movieShows.find(movie => movie.movieId === movieId);
 
     return (
       <>
@@ -165,6 +169,7 @@ class MovieTheatresAssociation extends Component {
           )
         })}
         <Button type="submit" onClick={this.handleSubmit}>Submit</Button>
+        <Button type="button" onClick={this.handleCancel}>Cancel</Button>
       </>
     )
   }

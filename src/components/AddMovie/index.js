@@ -32,6 +32,7 @@ class Movies extends Component {
 
   onInput = (e) => {
     this.setState({[e.target.name]: e.target.value})
+    console.log(e.target.value)
   }
 
   onSubmit = (e) => {
@@ -55,10 +56,10 @@ class Movies extends Component {
   }
 
   render() {
-    const movieCategoryOptions = ['U', 'A', 'U/A'];
-    const movieGenres = [ "Comedy", "Fantasy", "Crime", "Drama", "Music", "Adventure", "History", "Thriller",
-      "Animation", "Family", "Mystery", "Biography", "Action", "Film-Noir", "Romance", "Sci-Fi", "War", "Western", "Horror", "Musical", "Sport" ];
-    const movieFormat = ['2D', '3D'];
+    const movieCategoryOptions = [['U', 'U'], ['A', 'A'], ['U/A', 'U/A']];
+    const movieGenres = [ ["Comedy", "Comedy"], ["Fantasy", "Fantasy"], ["Crime", "Crime"], ["Drama", "Drama"], ["Music", "Music"], ["Adventure", "Adventure"], ["History", "History"], ["Thriller", "Thriller"],
+      ["Animation", "Animation"], ["Family", "Family"], ["Mystery", "Mystery"], ["Biography", "Biography"], ["Action", "Action"], ["Film-Noir", "Film-Noir"], ["Romance", "Romance"], ["Sci-Fi", "Sci-Fi"], ["War", "War"], ["Western", "Western"], ["Horror", "Horror"], ["Musical", "Musical"], ["Sport", "Sport"]];
+    const movieFormat = [['2D', '2D'], ['3D', '3D']];
 
     return (
       <AddMovieForm>
